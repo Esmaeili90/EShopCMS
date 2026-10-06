@@ -1,0 +1,163 @@
+﻿@model EShop_CMS.DataBase.Model.User
+@{
+    ViewData["Title"] = "Add User";
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add User</title>
+<style>
+  :root {
+    --bg: #F7F8FA;
+    --surface: #FFFFFF;
+    --border: #E3E6EA;
+    --text: #1B1F24;
+    --muted: #6B7280;
+    --accent: #2F6FED;
+    --accent-dark: #1F4FBE;
+    --danger: #B3261E;
+    --radius: 10px;
+    --shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    padding: 40px 20px;
+  }
+
+  .wrap { max-width: 480px; margin: 0 auto; }
+
+  header { margin-bottom: 24px; }
+
+  h1 { font-size: 22px; font-weight: 700; margin: 0; }
+
+  .subtitle { color: var(--muted); font-size: 14px; margin-top: 4px; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 24px;
+  }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 18px;
+  }
+
+  label { font-size: 13px; font-weight: 600; color: var(--text); }
+
+  .hint { font-size: 12px; color: var(--muted); }
+
+  input[type="text"],
+  input[type="email"],
+  input[type="password"] {
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--text);
+    background: var(--bg);
+  }
+
+  input:focus {
+    outline: 2px solid var(--accent);
+    outline-offset: 1px;
+    background: var(--surface);
+  }
+
+  .checkbox-field {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .checkbox-field label { font-size: 13px; margin: 0; }
+
+  .validation-message { color: var(--danger); font-size: 12px; }
+
+  .actions { display: flex; gap: 10px; margin-top: 8px; }
+
+  button {
+    background: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  button:hover { background: var(--accent-dark); }
+
+  .cancel-link {
+    display: inline-flex;
+    align-items: center;
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 14px;
+    padding: 10px 4px;
+  }
+
+  .cancel-link:hover { text-decoration: underline; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <h1>Add User</h1>
+    <div class="subtitle">Create a new account</div>
+  </header>
+
+  <div class="card">
+    <form asp-controller="Users" asp-action="CreateUser" method="post">
+
+      <div class="field">
+        <label asp-for="UserName">Username</label>
+        <input asp-for="UserName" type="text" placeholder="e.g. sara_m" />
+        <span asp-validation-for="UserName" class="validation-message"></span>
+      </div>
+
+      <div class="field">
+        <label asp-for="Email">Email</label>
+        <input asp-for="Email" type="email" placeholder="e.g. sara.m@example.com" />
+        <span asp-validation-for="Email" class="validation-message"></span>
+      </div>
+
+      <div class="field">
+        <label asp-for="PassWord">Password</label>
+        <input asp-for="PassWord" type="password" placeholder="At least 8 characters" autocomplete="new-password" />
+        <span class="hint">Minimum 8 characters.</span>
+        <span asp-validation-for="PassWord" class="validation-message"></span>
+      </div>
+
+      <div class="field checkbox-field">
+        <input asp-for="IsAdmin" type="checkbox" />
+        <label asp-for="IsAdmin">Grant admin access</label>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Save user</button>
+        <a class="cancel-link" href="/User/Index">Cancel</a>
+      </div>
+
+    </form>
+  </div>
+</div>
+
+</body>
+</html>

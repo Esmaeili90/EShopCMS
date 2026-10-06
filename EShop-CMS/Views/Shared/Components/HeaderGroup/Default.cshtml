@@ -1,0 +1,10 @@
+﻿@model List<ProductGroup>
+@{
+    Layout = null;
+}
+<nav class="nav-strip">
+    @foreach(var item in Model)
+    {
+        <a asp-controller="Home" asp-action="ShowByGroup" asp-route-groupId="@item.Id">@item.GroupTitle</a>
+    }
+</nav>

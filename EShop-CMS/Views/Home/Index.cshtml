@@ -1,0 +1,71 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewBag.title = "Home";
+}
+@await Component.InvokeAsync("ShowSlider")
+@await Component.InvokeAsync("Group")
+
+
+<!-- Products -->
+<section id="products">
+    <div class="section-head">
+        <h2>Popular products</h2>
+        <a href="#">View all</a>
+    </div>
+    <div class="grid">
+
+        
+        @foreach(var item in Model)
+        {
+            <div class="product-card">
+                <span class="discount-tag">Special</span>
+                <div class="product-thumb"><span> <img src="/ProductsImg/@item.ImgName" alt="@item.Title" /> </span></div>
+                <div class="product-body">
+                    <span class="badge ok">In stock</span>
+                    <div class="product-title">@item.Title</div>
+                    <div class="price-row">
+                        <span class="product-price">@item.Price.00$</span>
+                        <span class="old-price"></span>
+                    </div>
+                    <a class="buy-btn" asp-controller="ShowProduct" asp-action="Product" asp-route-id="@item.Id">See</a>
+                </div>
+            </div>
+        }
+
+
+    </div>
+</section>
+
+<!-- Perks -->
+<div class="perks">
+    <div class="perks-inner">
+        <div class="perk">
+            <div class="perk-icon">🚚</div>
+            <div>
+                <div class="perk-title">Free shipping</div>
+                <div class="perk-sub">On orders over 2,000,000 Toman</div>
+            </div>
+        </div>
+        <div class="perk">
+            <div class="perk-icon">↩️</div>
+            <div>
+                <div class="perk-title">Easy returns</div>
+                <div class="perk-sub">7-day return policy</div>
+            </div>
+        </div>
+        <div class="perk">
+            <div class="perk-icon">🔒</div>
+            <div>
+                <div class="perk-title">Secure payment</div>
+                <div class="perk-sub">100% protected checkout</div>
+            </div>
+        </div>
+        <div class="perk">
+            <div class="perk-icon">🎧</div>
+            <div>
+                <div class="perk-title">24/7 support</div>
+                <div class="perk-sub">We're here to help anytime</div>
+            </div>
+        </div>
+    </div>
+</div>

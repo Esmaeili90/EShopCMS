@@ -1,0 +1,276 @@
+﻿@model IEnumerable<EShop_CMS.DataBase.Model.Product>
+@{
+    ViewData["Title"] = "Products";
+    Layout = "_Layout";
+    var totalProducts = Model?.Count() ?? 0;
+    var inStockCount = Model?.Count(p => p.IsPresent) ?? 0;
+    var outOfStockCount = totalProducts - inStockCount;
+}
+
+<div class="page-head">
+    <div>
+        <h1>Product Management</h1>
+        <div class="subtitle">@totalProducts product(s) total</div>
+    </div>
+    <div style="display:flex; gap:10px;">
+        <button class="btn btn-outline">Export</button>
+        <a class="btn" asp-area="Admin" asp-controller="Products" asp-action="AddProduct">+ Add product</a>
+    </div>
+</div>
+
+<div class="stats-grid">
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Total Products</div>
+            <div class="stat-value">@totalProducts</div>
+        </div>
+        <div class="stat-icon">📦</div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">In stock</div>
+            <div class="stat-value">@inStockCount</div>
+        </div>
+        <div class="stat-icon">✅</div>
+    </div>
+    <div class="stat-card">
+        <div>
+            <div class="stat-label">Out of stock</div>
+            <div class="stat-value">@outOfStockCount</div>
+        </div>
+        <div class="stat-icon">⛔</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <h2>All products</h2>
+        <div class="toolbar">
+            <form method="get" asp-area="Admin" asp-controller="Products" asp-action="Index" style="display:flex; gap:10px;">
+                <input type="text" name="keyword" id="productSearch" placeholder="Search by title..." value="@Context.Request.Query["keyword"]">
+            </form>
+        </div>
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody id="productsBody">
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="cell-product">
+                                <div class="thumb-sm"></div>
+                                @item.Title
+                            </div>
+                        </td>
+                        <td>@item.Price.ToString("N0")</td>
+                        <td>
+                            @if (item.IsPresent)
+                            {
+                                <span class="badge ok">In stock</span>
+                            }
+                            else
+                            {
+                                <span class="badge no">Out of stock</span>
+                            }
+                        </td>
+                        <td class="row-actions">
+                            <a asp-area="Admin" asp-controller="Products" asp-action="EditProduct" asp-route-Id="@item.Id">Edit</a>
+                            <a class="delete" asp-area="Admin" asp-controller="Products" asp-action="DeleteProduct" asp-route-Id="@item.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty">No products found.</div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .page-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+
+        .page-head h1 { font-size: 20px; font-weight: 700; }
+        .page-head .subtitle { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: var(--accent);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 9px 16px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        .btn:hover { background: var(--accent-dark); }
+
+        .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+        .btn-outline:hover { background: var(--bg); }
+
+        .stats-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+          gap: 16px;
+          margin-bottom: 24px;
+        }
+
+        .stat-card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          padding: 18px;
+          display: flex;
+          align-items: flex-start;
+          justify-content: space-between;
+        }
+
+        .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+        .stat-value { font-size: 22px; font-weight: 800; }
+
+        .stat-icon {
+          width: 40px;
+          height: 40px;
+          border-radius: 10px;
+          background: var(--accent-light);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 17px;
+          flex-shrink: 0;
+        }
+
+        .card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          overflow: hidden;
+        }
+
+        .card-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          padding: 16px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .card-head h2 { font-size: 15px; font-weight: 700; }
+
+        .toolbar input[type="text"] {
+          padding: 8px 12px;
+          border: 1px solid var(--border);
+          border-radius: 8px;
+          font-size: 13px;
+          background: var(--bg);
+          min-width: 200px;
+        }
+
+        .toolbar input[type="text"]:focus {
+          outline: 2px solid var(--accent);
+          outline-offset: 1px;
+          background: var(--surface);
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th, td {
+          text-align: left;
+          padding: 12px 18px;
+          font-size: 13px;
+          border-bottom: 1px solid var(--border);
+          white-space: nowrap;
+        }
+
+        th {
+          color: var(--muted);
+          font-weight: 600;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        tbody tr:hover { background: var(--bg); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .cell-product { display: flex; align-items: center; gap: 10px; white-space: normal; }
+
+        .thumb-sm {
+          width: 38px;
+          height: 38px;
+          border-radius: 8px;
+          background: var(--accent-light);
+          flex-shrink: 0;
+        }
+
+        .badge {
+          display: inline-block;
+          padding: 3px 10px;
+          border-radius: 999px;
+          font-size: 11px;
+          font-weight: 600;
+        }
+
+        .badge.ok { background: #E7F6EC; color: #1E7A3C; }
+        .badge.no { background: #FCEAEA; color: #B3261E; }
+
+        .row-actions a {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--accent);
+          margin-right: 10px;
+        }
+
+        .row-actions a.delete { color: #B3261E; }
+
+        .empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
+
+        @@media (max-width: 560px) {
+          th, td { padding: 10px 12px; }
+        }
+    </style>
+}
+
+@section Scripts {
+    <script>
+        // Submit the search form automatically as the user types (debounced)
+        const searchInput = document.getElementById('productSearch');
+        let debounceTimer;
+        searchInput.addEventListener('input', () => {
+          clearTimeout(debounceTimer);
+          debounceTimer = setTimeout(() => {
+            searchInput.closest('form').submit();
+          }, 500);
+        });
+    </script>
+}

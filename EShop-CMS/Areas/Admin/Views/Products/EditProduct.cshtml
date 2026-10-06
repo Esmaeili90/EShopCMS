@@ -1,0 +1,282 @@
+﻿@model EShop_CMS.DataBase.Model.Product
+@{
+    ViewData["Title"] = "Edit Product";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Product</title>
+    <style>
+            :root {
+                --bg: #F7F8FA;
+                --surface: #FFFFFF;
+                --border: #E3E6EA;
+                --text: #1B1F24;
+                --muted: #6B7280;
+                --accent: #2F6FED;
+                --accent-dark: #1F4FBE;
+                --danger: #B3261E;
+                --radius: 10px;
+                --shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.08);
+            }
+
+            * {
+                box-sizing: border-box;
+            }
+
+            body {
+                margin: 0;
+                background: var(--bg);
+                color: var(--text);
+                font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+                padding: 40px 20px;
+            }
+
+            .wrap {
+                max-width: 520px;
+                margin: 0 auto;
+            }
+
+            header {
+                margin-bottom: 24px;
+            }
+
+            h1 {
+                font-size: 22px;
+                font-weight: 700;
+                margin: 0;
+            }
+
+            .subtitle {
+                color: var(--muted);
+                font-size: 14px;
+                margin-top: 4px;
+            }
+
+            .card {
+                background: var(--surface);
+                border: 1px solid var(--border);
+                border-radius: var(--radius);
+                box-shadow: var(--shadow);
+                padding: 24px;
+            }
+
+            .current-image {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+                margin-bottom: 18px;
+                padding: 10px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                background: var(--bg);
+            }
+
+                .current-image img {
+                    width: 56px;
+                    height: 56px;
+                    border-radius: 8px;
+                    object-fit: cover;
+                    background: var(--surface);
+                }
+
+                .current-image .label {
+                    font-size: 12px;
+                    color: var(--muted);
+                }
+
+            .field {
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
+                margin-bottom: 18px;
+            }
+
+            label {
+                font-size: 13px;
+                font-weight: 600;
+                color: var(--text);
+            }
+
+            input[type="text"],
+            input[type="number"],
+            select,
+            textarea {
+                padding: 10px 12px;
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                font-size: 14px;
+                color: var(--text);
+                background: var(--bg);
+                font-family: inherit;
+            }
+
+            textarea {
+                resize: vertical;
+                min-height: 90px;
+            }
+
+                input:focus, select:focus, textarea:focus {
+                    outline: 2px solid var(--accent);
+                    outline-offset: 1px;
+                    background: var(--surface);
+                }
+
+            input[type="file"] {
+                padding: 8px;
+                border: 1px dashed var(--border);
+                border-radius: 8px;
+                font-size: 13px;
+                background: var(--bg);
+            }
+
+            .field-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+            }
+
+            .checkbox-field {
+                flex-direction: row;
+                align-items: center;
+                gap: 8px;
+            }
+
+                .checkbox-field label {
+                    font-size: 13px;
+                    margin: 0;
+                }
+
+            .checkbox-group {
+                display: flex;
+                gap: 24px;
+                margin-bottom: 18px;
+            }
+
+            .validation-message {
+                color: var(--danger);
+                font-size: 12px;
+            }
+
+            .actions {
+                display: flex;
+                gap: 10px;
+                margin-top: 8px;
+            }
+
+            button {
+                background: var(--accent);
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 18px;
+                font-size: 14px;
+                font-weight: 600;
+                cursor: pointer;
+            }
+
+                button:hover {
+                    background: var(--accent-dark);
+                }
+
+            .cancel-link {
+                display: inline-flex;
+                align-items: center;
+                color: var(--muted);
+                text-decoration: none;
+                font-size: 14px;
+                padding: 10px 4px;
+            }
+
+                .cancel-link:hover {
+                    text-decoration: underline;
+                }
+
+            media (max-width: 480px) {
+                .field-row {
+                    grid-template-columns: 1fr;
+                }
+            }
+    </style>
+</head>
+<body>
+
+    <div class="wrap">
+        <header>
+            <h1>Edit Product</h1>
+            <div class="subtitle">Update the details below</div>
+        </header>
+
+        <div class="card">
+            <form asp-controller="Products" asp-area="Admin" asp-action="EditProduct" method="post" enctype="multipart/form-data">
+
+                <input type="hidden" asp-for="Id" />
+                <input type="hidden" asp-for="ImgName" />
+
+                @if (!string.IsNullOrEmpty(Model.ImgName))
+                {
+                    <div class="current-image">
+                        <img src="~/ProductsImg/@Model.ImgName" alt="@Model.Title" />
+                        <div class="label">Current image. Upload a new file below to replace it.</div>
+                    </div>
+                }
+
+                <div class="field">
+                    <label asp-for="Title">Title</label>
+                    <input asp-for="Title" type="text" placeholder="e.g. Wireless Mouse" />
+                    <span asp-validation-for="Title" class="validation-message"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Description">Description</label>
+                    <textarea asp-for="Description" placeholder="Short description of the product"></textarea>
+                    <span asp-validation-for="Description" class="validation-message"></span>
+                </div>
+
+                <div class="field-row">
+                    <div class="field">
+                        <label asp-for="Price">Price</label>
+                        <input asp-for="Price" type="number" min="0" placeholder="e.g. 250000" />
+                        <span asp-validation-for="Price" class="validation-message"></span>
+                    </div>
+                    <div class="field">
+                        <label asp-for="group">Category</label>
+                        <select asp-for="group" asp-items="ViewBag.Groups">
+                            <option value="">-- Select category --</option>
+                        </select>
+                            <option value=""></option>
+                        </select>
+                        <span asp-validation-for="group" class="validation-message"></span>
+                    </div>
+                </div>
+
+                <div class="field">
+                    <label>Replace product image</label>
+                    <input type="file" name="ImageFile" accept="image/*" />
+                </div>
+
+                <div class="checkbox-group">
+                    <div class="field checkbox-field">
+                        <input asp-for="IsPresent" type="checkbox" />
+                        <label asp-for="IsPresent">In stock</label>
+                    </div>
+                    <div class="field checkbox-field">
+                        <input asp-for="InSlider" type="checkbox" />
+                        <label asp-for="InSlider">Show in homepage slider</label>
+                    </div>
+                </div>
+
+                <div class="actions">
+                    <button type="submit">Save changes</button>
+                    <a class="cancel-link" href="/Product/Index">Cancel</a>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>

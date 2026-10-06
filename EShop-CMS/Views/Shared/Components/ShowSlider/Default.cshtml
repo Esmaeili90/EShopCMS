@@ -1,0 +1,60 @@
+﻿
+@model IEnumerable<Product> 
+<!-- Hero Slider -->
+@if (Model.Any())
+{
+    <style>
+        .hero-visual {
+            width: 280px;
+            height: 200px;
+            overflow: hidden;
+            border-radius: 14px;
+        }
+
+            .hero-visual img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                display: block; 
+            }
+    </style>
+    <section class="hero-slider">
+        <div class="slides-track" id="slidesTrack">
+
+            @foreach(var item in Model)
+            {
+                <div class="hero slide">
+                    <div class="hero-inner">
+                        <div class="hero-text">
+                            <span class="hero-tag">Limited time</span>
+                            <a asp-controller="ShowProduct" asp-action="Product" asp-route-id="@item.Id">
+                                <h1>@item.Title</h1>
+                            </a>
+                            <p>@item.Description</p>
+                            <a class="hero-btn" asp-controller="ShowProduct" asp-action="Product" asp-route-id="@item.Id">See offer</a>
+                        </div>
+                        <div class="hero-visual">
+                            @if (!string.IsNullOrEmpty(item.ImgName))
+                            {
+                                <a asp-controller="ShowProduct" asp-action="Product" asp-route-id="@item.Id">
+                                    <img alt="@item.Title" src="~/ProductsImg/@item.ImgName" class="hero-img" />
+                                </a>
+                            }
+                            else
+                            {
+                                <span>No image</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+
+
+        </div>
+
+        <button class="slider-arrow prev" id="prevArrow" aria-label="Previous slide">&#10094;</button>
+        <button class="slider-arrow next" id="nextArrow" aria-label="Next slide">&#10095;</button>
+
+        <div class="slider-dots" id="sliderDots"></div>
+    </section>
+}

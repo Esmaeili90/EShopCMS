@@ -1,0 +1,127 @@
+@model IEnumerable<EShop_CMS.DataBase.Model.ProductGroup>
+@{
+    ViewData["Title"] = "Groups";
+    var totalGroups = Model?.Count() ?? 0;
+}
+
+<div class="page-head">
+    <div>
+        <h1>Category Management</h1>
+        <div class="subtitle">@totalGroups group(s) total</div>
+    </div>
+    <a class="btn" asp-action="Create" asp-area="Admin" asp-controller="ProductGroups">+ Add group</a>
+</div>
+
+<div class="card">
+    <div class="card-head">
+        <h2>All groups</h2>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Products</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var group in Model)
+                {
+                    <tr>
+                        <td>@group.GroupTitle</td>
+                        <td class="row-actions">
+                            <a asp-area="Admin" asp-controller="ProductGroups" asp-action="Edit" asp-route-id="@group.Id">Edit</a>
+                            <a class="delete" asp-area="Admin" asp-controller="ProductGroups" asp-action="Delete" asp-route-id="@group.Id">Delete</a>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty">No groups found.</div>
+    }
+</div>
+
+@section Styles {
+    <style>
+        .page-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          flex-wrap: wrap;
+          gap: 12px;
+          margin-bottom: 20px;
+        }
+
+        .page-head h1 { font-size: 20px; font-weight: 700; }
+        .page-head .subtitle { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+        .btn {
+          display: inline-flex;
+          align-items: center;
+          gap: 6px;
+          background: var(--accent);
+          color: white;
+          border: none;
+          border-radius: 8px;
+          padding: 9px 16px;
+          font-size: 13px;
+          font-weight: 600;
+          cursor: pointer;
+          text-decoration: none;
+        }
+
+        .btn:hover { background: var(--accent-dark); }
+
+        .card {
+          background: var(--surface);
+          border: 1px solid var(--border);
+          border-radius: var(--radius);
+          box-shadow: var(--shadow);
+          overflow: hidden;
+        }
+
+        .card-head {
+          padding: 16px 18px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .card-head h2 { font-size: 15px; font-weight: 700; }
+
+        table { width: 100%; border-collapse: collapse; }
+
+        th, td {
+          text-align: left;
+          padding: 12px 18px;
+          font-size: 13px;
+          border-bottom: 1px solid var(--border);
+        }
+
+        th {
+          color: var(--muted);
+          font-weight: 600;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0.03em;
+        }
+
+        tbody tr:hover { background: var(--bg); }
+        tbody tr:last-child td { border-bottom: none; }
+
+        .row-actions a {
+          font-size: 12px;
+          font-weight: 600;
+          color: var(--accent);
+          margin-right: 10px;
+        }
+
+        .row-actions a.delete { color: #B3261E; }
+
+        .empty { text-align: center; color: var(--muted); padding: 40px 0; font-size: 14px; }
+    </style>
+}

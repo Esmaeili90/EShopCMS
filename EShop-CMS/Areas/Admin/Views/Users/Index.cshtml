@@ -1,0 +1,472 @@
+﻿@model IEnumerable<EShop_CMS.DataBase.Model.User>
+@{
+    ViewData["Title"] = "Users";
+    var totalUsers = Model?.Count() ?? 0;
+    var adminCount = Model?.Count(u => u.IsAdmin) ?? 0;
+    var customerCount = totalUsers - adminCount;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Management</title>
+    <style>
+            :root {
+              --bg: #F7F8FA;
+              --surface: #FFFFFF;
+              --border: #E3E6EA;
+              --text: #1B1F24;
+              --muted: #6B7280;
+              --accent: #2F6FED;
+              --accent-dark: #1F4FBE;
+              --accent-light: #EEF2FF;
+              --ok-bg: #E7F6EC;
+              --ok-text: #1E7A3C;
+              --no-bg: #FCEAEA;
+              --no-text: #B3261E;
+              --purple-bg: #F1EBFC;
+              --purple-text: #6A34C4;
+              --radius: 12px;
+              --shadow: 0 1px 2px rgba(16,24,40,0.06), 0 1px 3px rgba(16,24,40,0.08);
+              --sidebar-w: 240px;
+              --sidebar-bg: #14171C;
+              --sidebar-text: #C9CDD3;
+              --sidebar-muted: #8B9099;
+            }
+
+            * { box-sizing: border-box; margin: 0; padding: 0; }
+
+            body {
+              background: var(--bg);
+              color: var(--text);
+              font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+              line-height: 1.4;
+            }
+
+            a { color: inherit; text-decoration: none; }
+
+            .admin-shell { display: flex; min-height: 100vh; }
+
+            .sidebar {
+              width: var(--sidebar-w);
+              background: var(--sidebar-bg);
+              color: var(--sidebar-text);
+              flex-shrink: 0;
+              display: flex;
+              flex-direction: column;
+              position: sticky;
+              top: 0;
+              height: 100vh;
+              overflow-y: auto;
+              transition: transform 0.2s ease;
+              z-index: 30;
+            }
+
+            .sidebar-brand {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              padding: 20px;
+              font-size: 17px;
+              font-weight: 800;
+              color: white;
+              border-bottom: 1px solid #2A2E36;
+            }
+
+            .sidebar-brand .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+
+            .nav-group {
+              padding: 16px 12px 4px 12px;
+              font-size: 11px;
+              font-weight: 700;
+              letter-spacing: 0.05em;
+              text-transform: uppercase;
+              color: var(--sidebar-muted);
+            }
+
+            .nav-list { list-style: none; padding: 4px 12px; display: flex; flex-direction: column; gap: 2px; }
+
+            .nav-list a {
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              padding: 9px 12px;
+              border-radius: 8px;
+              font-size: 14px;
+              font-weight: 500;
+              color: var(--sidebar-text);
+            }
+
+            .nav-list a:hover { background: rgba(255,255,255,0.06); color: white; }
+            .nav-list a.active { background: var(--accent); color: white; }
+
+            .nav-icon { width: 18px; text-align: center; font-size: 15px; flex-shrink: 0; }
+
+            .sidebar-footer {
+              margin-top: auto;
+              padding: 14px 20px;
+              border-top: 1px solid #2A2E36;
+              display: flex;
+              align-items: center;
+              gap: 10px;
+              font-size: 13px;
+            }
+
+            .avatar-sm {
+              width: 32px;
+              height: 32px;
+              border-radius: 50%;
+              background: var(--accent);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: 700;
+              font-size: 13px;
+              color: white;
+              flex-shrink: 0;
+            }
+
+            .sidebar-footer .name { font-weight: 600; color: white; }
+            .sidebar-footer .role { font-size: 12px; color: var(--sidebar-muted); }
+
+            .main-col { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+
+            .topbar {
+              background: var(--surface);
+              border-bottom: 1px solid var(--border);
+              padding: 14px 24px;
+              display: flex;
+              align-items: center;
+              gap: 16px;
+              position: sticky;
+              top: 0;
+              z-index: 20;
+            }
+
+            .menu-toggle {
+              display: none;
+              background: none;
+              border: 1px solid var(--border);
+              border-radius: 8px;
+              width: 36px;
+              height: 36px;
+              font-size: 16px;
+              cursor: pointer;
+              color: var(--text);
+            }
+
+            .topbar-title { font-size: 16px; font-weight: 700; }
+
+            .topbar-search {
+              flex: 1;
+              max-width: 360px;
+              padding: 8px 12px;
+              border: 1px solid var(--border);
+              border-radius: 8px;
+              font-size: 13px;
+              background: var(--bg);
+              outline: none;
+            }
+
+            .topbar-search:focus { border-color: var(--accent); background: var(--surface); }
+
+            .topbar-actions { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+
+            .icon-btn {
+              position: relative;
+              width: 36px;
+              height: 36px;
+              border-radius: 8px;
+              border: 1px solid var(--border);
+              background: var(--surface);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: pointer;
+              font-size: 15px;
+            }
+
+            .icon-btn .dot-alert {
+              position: absolute;
+              top: 6px;
+              right: 6px;
+              width: 7px;
+              height: 7px;
+              border-radius: 50%;
+              background: var(--no-text);
+            }
+
+            .content { padding: 24px; flex: 1; }
+
+            .page-head {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              gap: 12px;
+              margin-bottom: 20px;
+            }
+
+            .page-head h1 { font-size: 20px; font-weight: 700; }
+            .page-head .subtitle { color: var(--muted); font-size: 13px; margin-top: 2px; }
+
+            .btn {
+              display: inline-flex;
+              align-items: center;
+              gap: 6px;
+              background: var(--accent);
+              color: white;
+              border: none;
+              border-radius: 8px;
+              padding: 9px 16px;
+              font-size: 13px;
+              font-weight: 600;
+              cursor: pointer;
+              text-decoration: none;
+            }
+
+            .btn:hover { background: var(--accent-dark); }
+
+            .btn-outline { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+            .btn-outline:hover { background: var(--bg); }
+
+            .stats-grid {
+              display: grid;
+              grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+              gap: 16px;
+              margin-bottom: 24px;
+            }
+
+            .stat-card {
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: var(--radius);
+              box-shadow: var(--shadow);
+              padding: 18px;
+              display: flex;
+              align-items: flex-start;
+              justify-content: space-between;
+            }
+
+            .stat-label { font-size: 12px; color: var(--muted); font-weight: 600; margin-bottom: 6px; }
+            .stat-value { font-size: 22px; font-weight: 800; }
+
+            .stat-icon {
+              width: 40px;
+              height: 40px;
+              border-radius: 10px;
+              background: var(--accent-light);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-size: 17px;
+              flex-shrink: 0;
+            }
+
+            .card {
+              background: var(--surface);
+              border: 1px solid var(--border);
+              border-radius: var(--radius);
+              box-shadow: var(--shadow);
+              overflow: hidden;
+            }
+
+            .card-head {
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              flex-wrap: wrap;
+              gap: 12px;
+              padding: 16px 18px;
+              border-bottom: 1px solid var(--border);
+            }
+
+            .card-head h2 { font-size: 15px; font-weight: 700; }
+
+            table { width: 100%; border-collapse: collapse; }
+
+            th, td {
+              text-align: left;
+              padding: 12px 18px;
+              font-size: 13px;
+              border-bottom: 1px solid var(--border);
+              white-space: nowrap;
+            }
+
+            th {
+              color: var(--muted);
+              font-weight: 600;
+              font-size: 11px;
+              text-transform: uppercase;
+              letter-spacing: 0.03em;
+            }
+
+            tbody tr:hover { background: var(--bg); }
+            tbody tr:last-child td { border-bottom: none; }
+
+            .cell-user { display: flex; align-items: center; gap: 10px; white-space: normal; }
+            .cell-user .name { font-weight: 600; font-size: 13px; }
+            .cell-user .email { font-size: 12px; color: var(--muted); }
+
+            .badge {
+              display: inline-block;
+              padding: 3px 10px;
+              border-radius: 999px;
+              font-size: 11px;
+              font-weight: 600;
+            }
+
+            .badge.role-admin { background: var(--purple-bg); color: var(--purple-text); }
+            .badge.role-customer { background: var(--accent-light); color: var(--accent); }
+
+            .row-actions a {
+              font-size: 12px;
+              font-weight: 600;
+              color: var(--accent);
+              margin-right: 10px;
+            }
+
+            .row-actions a.delete { color: var(--no-text); }
+
+            .empty {
+              text-align: center;
+              color: var(--muted);
+              padding: 40px 0;
+              font-size: 14px;
+            }
+
+            .sidebar-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 25; }
+
+            @@media (max-width: 900px) {
+              .sidebar { position: fixed; transform: translateX(-100%); }
+              .sidebar.open { transform: translateX(0); }
+              .menu-toggle { display: flex; align-items: center; justify-content: center; }
+              .sidebar-overlay.show { display: block; }
+              .topbar-search { display: none; }
+            }
+
+            @@media (max-width: 560px) {
+              .content { padding: 16px; }
+              th, td { padding: 10px 12px; }
+            }
+    </style>
+</head>
+<body>
+
+    <div class="admin-shell">
+
+        
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="main-col">
+
+
+            <div class="content">
+
+                <div class="page-head">
+                    <div>
+                        <h1>User Management</h1>
+                        <div class="subtitle">@totalUsers user(s) total</div>
+                    </div>
+                    <a class="btn" asp-area="Admin" asp-controller="Users" asp-action="CreateUser">+ Add user</a>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Total Users</div>
+                            <div class="stat-value">@totalUsers</div>
+                        </div>
+                        <div class="stat-icon">👥</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Customers</div>
+                            <div class="stat-value">@customerCount</div>
+                        </div>
+                        <div class="stat-icon">🙂</div>
+                    </div>
+                    <div class="stat-card">
+                        <div>
+                            <div class="stat-label">Admins</div>
+                            <div class="stat-value">@adminCount</div>
+                        </div>
+                        <div class="stat-icon">🛡️</div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-head">
+                        <h2>All users</h2>
+                    </div>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User</th>
+                                <th>Email</th>
+                                <th>Role</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (Model != null && Model.Any())
+                            {
+                                @foreach (var user in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="cell-user">
+                                                <div class="avatar-sm">@user.UserName.Substring(0, 1).ToUpper()</div>
+                                                <div class="name">@user.UserName</div>
+                                            </div>
+                                        </td>
+                                        <td>@user.Email</td>
+                                        <td>
+                                            @if (user.IsAdmin)
+                                            {
+                                                <span class="badge role-admin">Admin</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge role-customer">Customer</span>
+                                            }
+                                        </td>
+                                        <td class="row-actions">
+                                            <a asp-area="Admin" asp-controller="Users" asp-action="EditUser" asp-route-Id="@user?.Id">Edit</a>
+                                            <a class="delete" asp-area="Admin" asp-controller="Users" asp-action="DeleteUser" asp-route-Id="@user.Id">Delete</a>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+
+                    @if (Model == null || !Model.Any())
+                    {
+                        <div class="empty">No users found.</div>
+                    }
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            const toggle = document.getElementById('menuToggle');
+
+            function openSidebar() { sidebar.classList.add('open'); overlay.classList.add('show'); }
+            function closeSidebar() { sidebar.classList.remove('open'); overlay.classList.remove('show'); }
+
+            toggle.addEventListener('click', () => {
+              sidebar.classList.contains('open') ? closeSidebar() : openSidebar();
+            });
+            overlay.addEventListener('click', closeSidebar);
+    </script>
+
+</body>
+</html>

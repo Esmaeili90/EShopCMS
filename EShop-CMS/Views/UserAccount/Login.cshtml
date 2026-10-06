@@ -1,0 +1,122 @@
+﻿@model LoginViewModel
+@{
+	ViewBag.title = "Sign-in";
+	Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--===============================================================================================-->
+	<link rel="icon" type="image/png" href="/RegTemp/Imagesicons/favicon.ico" />
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/vendorbootstrap/css/bootstrap.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/fontsfont-awesome-4.7.0/css/font-awesome.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/vendoranimate/animate.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/vendorcss-hamburgers/hamburgers.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/vendorselect2/select2.min.css">
+	<!--===============================================================================================-->
+	<link rel="stylesheet" type="text/css" href="/RegTemp/css/util.css">
+	<link rel="stylesheet" type="text/css" href="/RegTemp/css/main.css">
+	<!--===============================================================================================-->
+</head>
+<body>
+
+	<div class="limiter">
+		<div class="container-login100">
+			<div class="wrap-login100">
+				<div class="login100-pic js-tilt" data-tilt>
+					<img src="/RegTemp/Images/img-01.png" alt="IMG">
+				</div>
+
+				<form class="login100-form validate-form" action="Login" method="post">
+					<span class="login100-form-title">
+						WellCome to ESHOP ! | Register
+					</span>
+
+					<div class="wrap-input100 " >
+						<input class="input100" asp-for="EmailOrUserName" placeholder="Email">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					
+
+
+
+
+					<div class="wrap-input100 validate-input" data-validate="Valid email is required: ex@abc.xyz">
+						<input class="input100" asp-for="Password" placeholder="Password">
+						<span class="focus-input100"></span>
+						<span class="symbol-input100">
+							<i class="fa fa-envelope" aria-hidden="true"></i>
+						</span>
+					</div>
+
+					
+
+					
+
+					<div class="container-login100-form-btn">
+						<button class="login100-form-btn" type="submit">
+							Log in
+						</button>
+					</div>
+					<div asp-validation-summary="All" class="text-danger"></div>
+					<div class="text-center p-t-12">
+						<span class="txt1">
+							Forgot
+						</span>
+						<a class="txt2" href="#">
+							Password?
+						</a>
+						<span class="txt1">
+							Don't have an
+						</span>
+						<a class="txt2" asp-controller="UserAccount" asp-action="Register">
+							Account?
+						</a>
+					</div>
+
+					<div class="text-center p-t-136">
+						<a class="txt2" href="#">
+
+							<i class="fa fa-long-arrow-right m-l-5" aria-hidden="true"></i>
+						</a>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+	
+	
+
+	<!--===============================================================================================-->
+	<script src="/RegTemp/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="/RegTemp/vendorbootstrap/js/popper.js"></script>
+	<script src="/RegTemp/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="/RegTemp/vendor/select2/select2.min.js"></script>
+	<!--===============================================================================================-->
+	<script src="/RegTemp/vendor/tilt/tilt.jquery.min.js"></script>
+	<script>
+		$('.js-tilt').tilt({
+		scale: 1.1
+		})
+	</script>
+	<!--===============================================================================================-->
+	<script src="//RegTemp/js/main.js"></script>
+
+</body>
+</html>

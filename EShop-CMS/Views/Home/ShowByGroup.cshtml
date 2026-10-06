@@ -1,0 +1,173 @@
+﻿@model List<Product>
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volta | Products</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <script>
+            tailwind.config = {
+              theme: {
+                extend: {
+                  colors: {
+                    page: '#FAFBFB',
+                    surface: '#FFFFFF',
+                    surfacealt: '#F1F4F4',
+                    hairline: '#E1E7E8',
+                    trace: '#00958A',
+                    signal: '#E8631C',
+                    hi: '#10171A',
+                    mid: '#5F6E71',
+                  },
+                  fontFamily: {
+                    sans: ['Manrope', 'sans-serif'],
+                    mono: ['JetBrains Mono', 'monospace'],
+                  }
+                }
+              }
+            }
+    </script>
+    <style>
+            body { background-color: #FAFBFB; }
+            .pcb-corner {
+              clip-path: polygon(0 12px, 12px 0, 100% 0, 100% calc(100% - 12px), calc(100% - 12px) 100%, 0 100%);
+            }
+            .trace-dash {
+              background-image: linear-gradient(to right, #E1E7E8 50%, transparent 0%);
+              background-size: 8px 1px;
+              background-repeat: repeat-x;
+              background-position: bottom;
+            }
+            .glow-hover { transition: box-shadow .25s ease, border-color .25s ease, transform .25s ease; }
+            .glow-hover:hover {
+              box-shadow: 0 0 0 1px rgba(0,149,138,0.35), 0 8px 24px -8px rgba(0,149,138,0.25);
+              border-color: rgba(0,149,138,0.5);
+              transform: translateY(-2px);
+            }
+            .no-scrollbar::-webkit-scrollbar { display: none; }
+            .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+            input[type="range"] { accent-color: #00958A; }
+            ::selection { background: #00958A; color: #FFFFFF; }
+            media (prefers-reduced-motion: reduce) {
+              .glow-hover { transition: none; }
+              .glow-hover:hover { transform: none; }
+            }
+            *:focus-visible {
+              outline: 2px solid #00958A;
+              outline-offset: 2px;
+            }
+    </style>
+</head>
+<body class="font-sans text-hi min-h-screen bg-page">
+
+
+
+    <main class="max-w-7xl mx-auto px-5 py-8 flex gap-8 items-start">
+
+        <!-- Product grid -->
+        <section class="flex-1 min-w-0">
+            <div class="flex flex-wrap items-end justify-between gap-4 mb-6">
+                <div>
+                    <p class="text-xs text-mid font-mono mb-1">Home / Products / @ViewBag.Group</p>
+                <h1 class="text-2xl font-extrabold">@ViewBag.Group</h1>
+                    <p class="text-sm text-mid mt-1"><span class="font-mono text-trace">@Model.Count</span> items found</p>
+                </div>
+                <div class="flex items-center gap-2 text-sm">
+                    <label class="text-mid">Sort by:</label>
+                    <select class="bg-surface border border-hairline rounded-lg py-2 px-3 text-hi outline-none focus:border-trace">
+                        <option>Best selling</option>
+                        <option>Price: low to high</option>
+                        <option>Price: high to low</option>
+                        <option>Newest</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+
+                <!-- Card 1 -->
+                
+                    @foreach (var item in Model)
+                        {
+                            
+                <article class="pcb-corner bg-surface border border-hairline glow-hover flex flex-col p-4">
+                        <div class="relative bg-surfacealt rounded-md h-32 flex items-center justify-center mb-3 overflow-hidden">
+                            <span class="absolute top-2 left-2 bg-signal text-white text-[10px] font-bold px-2 py-0.5 rounded"></span>
+                            <img src="~/ProductsImg/@item.ImgName"
+                                 alt="@item.Title"
+                                 class="w-full h-full object-cover" />
+                        </div>
+                    <h3 class="text-sm font-bold trace-dash pb-2 mb-2">@item.Title</h3>
+                    <div class="flex gap-1 mb-3">
+                        <span class="w-2 h-2 rounded-full bg-trace"></span><span class="w-2 h-2 rounded-full bg-trace"></span>
+                        <span class="w-2 h-2 rounded-full bg-trace"></span><span class="w-2 h-2 rounded-full bg-trace"></span>
+                        <span class="w-2 h-2 rounded-full bg-hairline"></span>
+                    </div>
+                    <div class="mt-auto flex items-end justify-between">
+                        <div>
+                            <p class="font-mono font-bold text-hi">@item.Price</p>
+                        </div>
+                            <a asp-controller="ShowProduct" asp-action="Product" asp-route-id="@item.Id" class="bg-trace/10 hover:bg-trace hover:text-white text-trace border border-trace/40 rounded-lg p-2 transition-colors" aria-label="View product">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+                            </a>
+                    </div>
+                    </article>
+                        }
+                
+
+                
+
+            </div>
+
+            <!-- Pagination -->
+            <div class="flex items-center justify-center gap-1 mt-10 font-mono text-sm">
+                <button class="w-9 h-9 rounded-lg border border-hairline text-mid hover:border-trace/50 hover:text-hi transition-colors">‹</button>
+                <button class="w-9 h-9 rounded-lg bg-trace text-white font-bold">1</button>
+                <span class="w-4 text-center text-hairline">╌</span>
+                <button class="w-9 h-9 rounded-lg border border-hairline text-mid hover:border-trace/50 hover:text-hi transition-colors">2</button>
+                <span class="w-4 text-center text-hairline">╌</span>
+                <button class="w-9 h-9 rounded-lg border border-hairline text-mid hover:border-trace/50 hover:text-hi transition-colors">3</button>
+                <button class="w-9 h-9 rounded-lg border border-hairline text-mid hover:border-trace/50 hover:text-hi transition-colors">›</button>
+            </div>
+        </section>
+
+        <!-- Filters sidebar -->
+        <aside class="hidden lg:block w-64 shrink-0 sticky top-28">
+            <div class="bg-surface border border-hairline rounded-xl p-5">
+                <h2 class="text-sm font-extrabold mb-4 flex items-center gap-2">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M4 6h16M7 12h10M10 18h4" stroke="#00958A" stroke-width="1.8" stroke-linecap="round" /></svg>
+                    Filters
+                </h2>
+
+                <div class="mb-6">
+                    <p class="text-xs text-mid font-mono mb-3">Price range</p>
+                    <input type="range" min="0" max="500" value="250" class="w-full h-1 bg-hairline rounded-lg appearance-none cursor-pointer">
+                    <div class="flex justify-between text-[11px] font-mono text-mid mt-2">
+                        <span>$0</span>
+                        <span>$500</span>
+                    </div>
+                </div>
+
+                <div class="mb-6">
+                    
+                </div>
+
+                <div class="mb-2">
+                    
+                </div>
+
+                <button class="w-full mt-6 bg-transparent border border-hairline text-mid hover:text-hi hover:border-trace/50 rounded-lg py-2 text-sm transition-colors">
+                    Clear filters
+                </button>
+            </div>
+        </aside>
+
+    </main>
+
+
+
+</body>
+</html>

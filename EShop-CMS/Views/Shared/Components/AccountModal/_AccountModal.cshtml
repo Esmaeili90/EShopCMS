@@ -1,0 +1,296 @@
+﻿@model EShop_CMS.DataBase.Model.User
+@{
+    Layout = null;
+}
+<!-- Account trigger button (renders in the header wherever await Component.InvokeAsync("AccountModal") is called) -->
+<button type="button" class="account-trigger" id="openAccountModal">
+    <span class="account-avatar">@Model.UserName.Substring(0, 1).ToUpper()</span>
+    <span>@Model.UserName</span>
+</button>
+
+<!-- Account Settings Modal -->
+<div class="modal-overlay" id="accountModalOverlay">
+    <div class="modal">
+        <div class="modal-head">
+            <h3>Account settings</h3>
+            <button class="modal-close" id="closeAccountModal">&times;</button>
+        </div>
+
+        @if (TempData["AccountError"] != null)
+        {
+            <div class="alert-error">@TempData["AccountError"]</div>
+        }
+        @if (TempData["AccountSuccess"] != null)
+        {
+            <div class="alert-success">@TempData["AccountSuccess"]</div>
+        }
+
+        <form asp-controller="UserAccount" asp-action="UpdateProfile" method="post">
+            <div class="modal-body">
+
+                <input type="hidden" asp-for="Id" />
+
+                <div class="field">
+                    <label asp-for="UserName">Username</label>
+                    <input asp-for="UserName" type="text" placeholder="Your username" />
+                    <span asp-validation-for="UserName" class="validation-message"></span>
+                </div>
+
+                <div class="field">
+                    <label asp-for="Email">Email</label>
+                    <input asp-for="Email" type="email" placeholder="you@example.com" />
+                    <span asp-validation-for="Email" class="validation-message"></span>
+                </div>
+
+                <div class="divider"></div>
+
+                <div class="field">
+                    <label>Current password</label>
+                    <input type="password" name="CurrentPassword" placeholder="Required to change password" autocomplete="current-password" />
+                    <span class="hint">Only needed if you're setting a new password below.</span>
+                </div>
+
+                <div class="field">
+                    <label>New password</label>
+                    <input type="password" name="NewPassword" placeholder="Leave blank to keep current password" autocomplete="new-password" />
+                    <span class="hint">Minimum 8 characters.</span>
+                </div>
+
+                <div class="field">
+                    <label>Confirm new password</label>
+                    <input type="password" name="ConfirmPassword" placeholder="Repeat new password" autocomplete="new-password" />
+                </div>
+
+            </div>
+            <div class="modal-foot">
+                <button type="button" class="btn-outline" id="cancelAccountModal">Cancel</button>
+                <button type="submit" class="btn-primary">Save changes</button>
+                <a asp-controller="UserAccount"
+                   asp-action="Logout"
+                   class="btn btn-danger">
+                    Logout
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .account-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: none;
+        border: none;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--text, #1B1F24);
+        padding: 6px 10px;
+        border-radius: 8px;
+    }
+
+        .account-trigger:hover {
+            background: var(--bg, #F7F8FA);
+        }
+
+    .account-avatar {
+        width: 26px;
+        height: 26px;
+        border-radius: 50%;
+        background: var(--accent, #2F6FED);
+        color: white;
+        font-size: 12px;
+        font-weight: 700;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(16,24,40,0.45);
+        align-items: center;
+        justify-content: center;
+        z-index: 100;
+        padding: 20px;
+    }
+
+        .modal-overlay.show {
+            display: flex;
+        }
+
+    .modal {
+        background: var(--surface, #FFFFFF);
+        border-radius: 12px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 12px 32px rgba(16,24,40,0.2);
+        overflow: hidden;
+        max-height: 90vh;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 16px 20px;
+        border-bottom: 1px solid var(--border, #E3E6EA);
+    }
+
+        .modal-head h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin: 0;
+        }
+
+    .modal-close {
+        background: none;
+        border: none;
+        font-size: 18px;
+        cursor: pointer;
+        color: var(--muted, #6B7280);
+    }
+
+    .modal-body {
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        overflow-y: auto;
+    }
+
+    .field {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+        .field label {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--muted, #6B7280);
+        }
+
+        .field input {
+            padding: 9px 12px;
+            border: 1px solid var(--border, #E3E6EA);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--bg, #F7F8FA);
+            color: var(--text, #1B1F24);
+        }
+
+            .field input:focus {
+                outline: 2px solid var(--accent, #2F6FED);
+                outline-offset: 1px;
+                background: var(--surface, #FFFFFF);
+            }
+
+    .hint {
+        font-size: 11px;
+        color: var(--muted, #6B7280);
+    }
+
+    .validation-message {
+        color: #B3261E;
+        font-size: 12px;
+    }
+
+    .divider {
+        border-top: 1px solid var(--border, #E3E6EA);
+        margin: 6px 0 4px 0;
+    }
+
+    .modal-foot {
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+        padding: 16px 20px;
+        border-top: 1px solid var(--border, #E3E6EA);
+    }
+
+    .btn-primary {
+        background: var(--accent, #2F6FED);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .btn-primary:hover {
+            background: var(--accent-dark, #1F4FBE);
+        }
+
+    .btn-outline {
+        background: var(--surface, #FFFFFF);
+        color: var(--text, #1B1F24);
+        border: 1px solid var(--border, #E3E6EA);
+        border-radius: 8px;
+        padding: 9px 18px;
+        font-size: 13px;
+        font-weight: 600;
+        cursor: pointer;
+    }
+
+        .btn-outline:hover {
+            background: var(--bg, #F7F8FA);
+        }
+
+    .alert-error {
+        background: #FCEAEA;
+        color: #B3261E;
+        border: 1px solid #F5C6C6;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 13px;
+        margin: 16px 20px 0 20px;
+    }
+
+    .alert-success {
+        background: #E7F6EC;
+        color: #1E7A3C;
+        border: 1px solid #C3E9CE;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-size: 13px;
+        margin: 16px 20px 0 20px;
+    }
+
+    media (max-width: 480px) {
+        .modal {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<script>
+    (function() {
+        const overlay = document.getElementById('accountModalOverlay');
+        const openBtn = document.getElementById('openAccountModal');
+        const closeBtn = document.getElementById('closeAccountModal');
+        const cancelBtn = document.getElementById('cancelAccountModal');
+
+        function openModal() { overlay.classList.add('show'); }
+        function closeModal() { overlay.classList.remove('show'); }
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        cancelBtn.addEventListener('click', closeModal);
+        overlay.addEventListener('click', (e) => { if (e.target === overlay) closeModal(); });
+
+        // Re-open automatically if the server sent back a validation error or success message
+        @if (TempData.Peek("AccountError") != null || TempData.Peek("AccountSuccess") != null)
+            {
+                <text>openModal();</text>
+        }
+      })();
+</script>

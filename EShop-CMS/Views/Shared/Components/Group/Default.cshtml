@@ -1,0 +1,18 @@
+﻿@model IEnumerable<ProductGroup>
+<!-- Categories -->
+<section>
+    <div class="section-head">
+        <h2>Shop by category</h2>
+    </div>
+    <div class="categories">
+        
+        @foreach(var item in Model)
+        {
+            <a class="category-card" asp-controller="Home" asp-action="ShowByGroup" asp-route-groupId="@item.Id">
+                <div class="category-icon">📚</div>
+                <div class="name">@item.GroupTitle</div>
+            </a>
+        }
+
+    </div>
+</section>
